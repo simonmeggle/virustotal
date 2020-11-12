@@ -26,6 +26,9 @@ def red(text):
 def yellow(text):
     return color(text, 33)
 
+def green(text):
+    return color(text, 32)
+
 class Hash(object):
     def __init__(self, path):
         self.path = path
@@ -122,15 +125,14 @@ class Scanner(object):
             print(TPL_SECTION.format('\n     '.join(entry_paths))),
 
             if entry['response_code'] == 0:
-                print('NOT FOUND')
+                print(yellow('NO ENTRY FOUND ON VIRUSTOTAL.COM - upload the file and do the first scan.'))
             else:
-                print(yellow('FOUND'))
-
+                print('File has a valid entry on virustotal.com')
                 signatures = []
                 for av, scan in entry['scans'].items():
                     if scan['result']:
                         signatures.append(scan['result'])
-                
+
                 if entry['positives'] > 0:
                     print(TPL_MATCH.format(
                         entry['positives'],
@@ -139,9 +141,9 @@ class Scanner(object):
                         entry['resource'],
                         entry['scan_date']
                         ))
-
-                    if entry['positives'] > 0:
-                        print(TPL_SIGNATURES.format('\n\t\t'.join(signatures)))
+                    print(TPL_SIGNATURES.format('\n\t\t'.join(signatures)))
+                else:
+                    print(green("OK: File is clean."))
 
     def run(self):
         if not self.key:
@@ -168,3 +170,4 @@ if __name__ == '__main__':
 
     scan = Scanner(args.key, args.path)
     scan.run()
+
