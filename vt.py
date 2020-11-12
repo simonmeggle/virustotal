@@ -2,8 +2,8 @@
 import os
 import sys
 import json
-import urllib
-import urllib2
+import urllib.parse
+import urllib.request
 import hashlib
 import argparse
 
@@ -91,14 +91,14 @@ class Scanner(object):
             if entry['sha256'] not in hashes:
                 hashes.append(entry['sha256'])
 
-        data = urllib.urlencode({
+        data = urllib.parse.urlencode({
             'resource' : ','.join(hashes),
             'apikey' : self.key
-            })
+            }).encode("utf-8")
 
         try:
-            request = urllib2.Request(VIRUSTOTAL_FILE_URL, data)
-            response = urllib2.urlopen(request)
+            request = urllib.request.Request(VIRUSTOTAL_FILE_URL, data)
+            response = urllib.request.urlopen(request)
             report = json.loads(response.read())
         except Exception as e:
             print(red("[!] ERROR: Cannot obtain results from VirusTotal: {0}\n".format(e)))
